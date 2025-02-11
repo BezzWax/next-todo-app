@@ -13,6 +13,7 @@ export const ToDoList = () => {
   useEffect(() => {
     fetchTasks(limit);
   }, [fetchTasks, limit]);
+  
 
   const handleAddTask = () => {
     if (newTask.trim() === "") return;
