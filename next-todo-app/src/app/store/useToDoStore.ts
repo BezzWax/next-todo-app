@@ -6,11 +6,13 @@ export const useToDoStore = create<ToDoStore>((set) => ({
   tasks: [],
   isLoading: false,
   error: null,
+  limits: 10,
 
   addTask: async (task) => {
     try {
       const response = await axios.post("https://jsonplaceholder.typicode.com/todos", task);
-      set((state) => ({ tasks: [...state.tasks, response.data] }));
+      const newTask = { ...response.data, id: task.id || crypto.randomUUID() };
+      set((state) => ({ tasks: [...state.tasks, newTask] }));
     } catch (error: any) {
       set({ error: error.message });
     }
@@ -34,14 +36,16 @@ export const useToDoStore = create<ToDoStore>((set) => ({
 
   setTasks: (tasks) => set({ tasks }),
 
+  setLimits: (limits) => set({ limits }),
+
   setLoading: (loading) => set({ isLoading: loading }),
 
   setError: (error) => set({ error }),
 
-  fetchTasks: async () => {
+  fetchTasks: async (limits: any) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axios.get("https://jsonplaceholder.typicode.com/todos?_limit=10");
+      const response = await axios.get(`https://jsonplaceholder.typicode.com/todos?_limit=${limits}`);
       set({ tasks: response.data, isLoading: false });
     } catch (error: any) {
       set({ error: error.message, isLoading: false });
